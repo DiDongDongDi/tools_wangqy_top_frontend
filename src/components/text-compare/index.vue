@@ -40,15 +40,19 @@
     <div v-if="hasResults" class="results-section">
       <div class="results-header">
         <h3>比较结果</h3>
-        <t-button size="small" theme="default" variant="outline" @click="copyResults"> 复制结果 </t-button>
       </div>
 
       <div class="results-content">
         <div class="results-grid">
           <div class="result-group">
             <div class="result-title">
-              <t-icon name="error-circle" class="icon-only" />
-              <span>文本 A 多余行 ({{ onlyInA.length }} 行)</span>
+              <div class="title-content">
+                <t-icon name="error-circle" class="icon-only" />
+                <span>文本 A 多余行 ({{ onlyInA.length }} 行)</span>
+              </div>
+              <t-button size="small" theme="default" variant="outline" @click="copyTextA" class="copy-btn">
+                复制
+              </t-button>
             </div>
             <t-textarea
               :value="onlyInAText"
@@ -61,8 +65,13 @@
 
           <div class="result-group">
             <div class="result-title">
-              <t-icon name="check-circle" class="icon-common" />
-              <span>文本 AB 公共行 ({{ commonLines.length }} 行)</span>
+              <div class="title-content">
+                <t-icon name="check-circle" class="icon-common" />
+                <span>文本 AB 公共行 ({{ commonLines.length }} 行)</span>
+              </div>
+              <t-button size="small" theme="default" variant="outline" @click="copyCommon" class="copy-btn">
+                复制
+              </t-button>
             </div>
             <t-textarea
               :value="commonLinesText"
@@ -75,8 +84,13 @@
 
           <div class="result-group">
             <div class="result-title">
-              <t-icon name="error-circle" class="icon-only" />
-              <span>文本 B 多余行 ({{ onlyInB.length }} 行)</span>
+              <div class="title-content">
+                <t-icon name="error-circle" class="icon-only" />
+                <span>文本 B 多余行 ({{ onlyInB.length }} 行)</span>
+              </div>
+              <t-button size="small" theme="default" variant="outline" @click="copyTextB" class="copy-btn">
+                复制
+              </t-button>
             </div>
             <t-textarea
               :value="onlyInBText"
@@ -180,50 +194,37 @@ const compareTexts = () => {
   }, 500);
 };
 
-// 复制结果
-const copyResults = async () => {
+// 复制文本A
+const copyTextA = async () => {
   try {
-    const resultText = generateResultText();
-    await navigator.clipboard.writeText(resultText);
-    MessagePlugin.success('结果已复制到剪贴板');
+    await navigator.clipboard.writeText(onlyInAText.value);
+    MessagePlugin.success('文本 A 多余行已复制到剪贴板');
   } catch (error) {
     MessagePlugin.error('复制失败');
     console.error('Copy error:', error);
   }
 };
 
-// 生成结果文本
-const generateResultText = () => {
-  let result = '=== 文本比较结果 ===\n\n';
-
-  result += `文本 A 多余行 (${onlyInA.value.length} 行):\n`;
-  if (onlyInA.value.length > 0) {
-    onlyInA.value.forEach((line) => {
-      result += `- ${line}\n`;
-    });
-  } else {
-    result += '无多余行\n';
+// 复制文本B
+const copyTextB = async () => {
+  try {
+    await navigator.clipboard.writeText(onlyInBText.value);
+    MessagePlugin.success('文本 B 多余行已复制到剪贴板');
+  } catch (error) {
+    MessagePlugin.error('复制失败');
+    console.error('Copy error:', error);
   }
+};
 
-  result += `\n文本 AB 公共行 (${commonLines.value.length} 行):\n`;
-  if (commonLines.value.length > 0) {
-    commonLines.value.forEach((line) => {
-      result += `- ${line}\n`;
-    });
-  } else {
-    result += '无公共行\n';
+// 复制公共行
+const copyCommon = async () => {
+  try {
+    await navigator.clipboard.writeText(commonLinesText.value);
+    MessagePlugin.success('文本 AB 公共行已复制到剪贴板');
+  } catch (error) {
+    MessagePlugin.error('复制失败');
+    console.error('Copy error:', error);
   }
-
-  result += `\n文本 B 多余行 (${onlyInB.value.length} 行):\n`;
-  if (onlyInB.value.length > 0) {
-    onlyInB.value.forEach((line) => {
-      result += `- ${line}\n`;
-    });
-  } else {
-    result += '无多余行\n';
-  }
-
-  return result;
 };
 </script>
 <style scoped>
@@ -319,6 +320,7 @@ const generateResultText = () => {
 .result-title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 12px;
   font-weight: 600;
   color: var(--td-text-color-primary);
@@ -327,6 +329,12 @@ const generateResultText = () => {
 .result-title .t-icon {
   margin-right: 8px;
   font-size: 16px;
+}
+
+.result-title .title-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .icon-only {
@@ -355,6 +363,10 @@ const generateResultText = () => {
 
 .result-textarea:focus {
   border-color: var(--td-brand-color);
+}
+
+.copy-btn {
+  margin-left: auto;
 }
 
 @media (max-width: 1024px) {
