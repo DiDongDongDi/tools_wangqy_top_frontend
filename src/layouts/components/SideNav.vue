@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { difference, remove, union } from 'lodash';
+import { difference, union } from 'lodash';
 import type { MenuValue } from 'tdesign-vue-next';
 import type { PropType } from 'vue';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -91,8 +91,8 @@ watch(
 const onExpanded = (value: MenuValue[]) => {
   const currentOperationMenu = difference(expanded.value, value);
   const allExpanded = union(value, expanded.value);
-  remove(allExpanded, (item) => currentOperationMenu.includes(item));
-  expanded.value = allExpanded;
+  const filteredExpanded = allExpanded.filter((item) => !currentOperationMenu.includes(item));
+  expanded.value = filteredExpanded;
 };
 
 const sideMode = computed(() => {
