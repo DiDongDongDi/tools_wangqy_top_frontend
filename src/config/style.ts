@@ -1,8 +1,8 @@
 export default {
-  showFooter: true,
+  showFooter: false,
   isSidebarCompact: false,
-  showBreadcrumb: false,
-  menuAutoCollapsed: false,
+  showBreadcrumb: true,
+  menuAutoCollapsed: true,
   mode: 'light',
   layout: 'side',
   splitMenu: false,
@@ -10,7 +10,7 @@ export default {
   isFooterAside: false,
   isSidebarFixed: true,
   isHeaderFixed: true,
-  isUseTabsRouter: false,
-  showHeader: true,
+  isUseTabsRouter: true,
+  showHeader: false,
   brandTheme: '#0052D9',
 };
