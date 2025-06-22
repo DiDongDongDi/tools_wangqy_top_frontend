@@ -44,43 +44,48 @@
       </div>
 
       <div class="results-content">
-        <div class="result-group">
-          <div class="result-title">
-            <t-icon name="error-circle" class="icon-only" />
-            <span>文本 A 多余行 ({{ onlyInA.length }} 行)</span>
-          </div>
-          <div v-if="onlyInA.length > 0" class="result-list">
-            <div v-for="(line, index) in onlyInA" :key="`a-${index}`" class="result-item">
-              {{ line }}
+        <div class="results-grid">
+          <div class="result-group">
+            <div class="result-title">
+              <t-icon name="error-circle" class="icon-only" />
+              <span>文本 A 多余行 ({{ onlyInA.length }} 行)</span>
             </div>
+            <t-textarea
+              :value="onlyInAText"
+              readonly
+              :autosize="{ minRows: 6, maxRows: 12 }"
+              class="result-textarea"
+              placeholder="无多余行"
+            />
           </div>
-          <div v-else class="result-empty">无多余行</div>
-        </div>
 
-        <div class="result-group">
-          <div class="result-title">
-            <t-icon name="check-circle" class="icon-common" />
-            <span>文本 AB 公共行 ({{ commonLines.length }} 行)</span>
-          </div>
-          <div v-if="commonLines.length > 0" class="result-list">
-            <div v-for="(line, index) in commonLines" :key="`common-${index}`" class="result-item common">
-              {{ line }}
+          <div class="result-group">
+            <div class="result-title">
+              <t-icon name="check-circle" class="icon-common" />
+              <span>文本 AB 公共行 ({{ commonLines.length }} 行)</span>
             </div>
+            <t-textarea
+              :value="commonLinesText"
+              readonly
+              :autosize="{ minRows: 6, maxRows: 12 }"
+              class="result-textarea common"
+              placeholder="无公共行"
+            />
           </div>
-          <div v-else class="result-empty">无公共行</div>
-        </div>
 
-        <div class="result-group">
-          <div class="result-title">
-            <t-icon name="error-circle" class="icon-only" />
-            <span>文本 B 多余行 ({{ onlyInB.length }} 行)</span>
-          </div>
-          <div v-if="onlyInB.length > 0" class="result-list">
-            <div v-for="(line, index) in onlyInB" :key="`b-${index}`" class="result-item">
-              {{ line }}
+          <div class="result-group">
+            <div class="result-title">
+              <t-icon name="error-circle" class="icon-only" />
+              <span>文本 B 多余行 ({{ onlyInB.length }} 行)</span>
             </div>
+            <t-textarea
+              :value="onlyInBText"
+              readonly
+              :autosize="{ minRows: 6, maxRows: 12 }"
+              class="result-textarea"
+              placeholder="无多余行"
+            />
           </div>
-          <div v-else class="result-empty">无多余行</div>
         </div>
       </div>
     </div>
@@ -106,6 +111,19 @@ const commonLines = ref<string[]>([]);
 // 计算属性
 const hasResults = computed(() => {
   return onlyInA.value.length > 0 || onlyInB.value.length > 0 || commonLines.value.length > 0;
+});
+
+// 格式化结果文本
+const onlyInAText = computed(() => {
+  return onlyInA.value.length > 0 ? onlyInA.value.join('\n') : '';
+});
+
+const onlyInBText = computed(() => {
+  return onlyInB.value.length > 0 ? onlyInB.value.join('\n') : '';
+});
+
+const commonLinesText = computed(() => {
+  return commonLines.value.length > 0 ? commonLines.value.join('\n') : '';
 });
 
 // 清空文本A
@@ -287,12 +305,15 @@ const generateResultText = () => {
   padding: 20px;
 }
 
-.result-group {
-  margin-bottom: 24px;
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
 }
 
-.result-group:last-child {
-  margin-bottom: 0;
+.result-group {
+  display: flex;
+  flex-direction: column;
 }
 
 .result-title {
@@ -316,39 +337,31 @@ const generateResultText = () => {
   color: var(--td-success-color);
 }
 
-.result-list {
-  background-color: var(--td-bg-color-page);
-  border: 1px solid var(--td-border-level-1-color);
-  border-radius: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.result-item {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--td-border-level-1-color);
+.result-textarea {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.4;
-  word-break: break-all;
-}
-
-.result-item:last-child {
-  border-bottom: none;
-}
-
-.result-item.common {
-  background-color: var(--td-success-color-light);
-  color: var(--td-success-color);
-}
-
-.result-empty {
-  padding: 16px;
-  text-align: center;
-  color: var(--td-text-color-placeholder);
   background-color: var(--td-bg-color-page);
   border: 1px solid var(--td-border-level-1-color);
   border-radius: 6px;
+  resize: none;
+}
+
+.result-textarea.common {
+  background-color: var(--td-success-color-light);
+  border-color: var(--td-success-color);
+  color: var(--td-success-color);
+}
+
+.result-textarea:focus {
+  border-color: var(--td-brand-color);
+}
+
+@media (max-width: 1024px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -365,6 +378,10 @@ const generateResultText = () => {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
+  }
+
+  .results-content {
+    padding: 16px;
   }
 }
 </style>
