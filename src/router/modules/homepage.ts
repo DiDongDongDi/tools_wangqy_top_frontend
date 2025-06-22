@@ -1,4 +1,4 @@
-import { DashboardIcon } from 'tdesign-icons-vue-next';
+import { TextboxIcon } from 'tdesign-icons-vue-next';
 import { shallowRef } from 'vue';
 
 import Layout from '@/layouts/index.vue';
@@ -11,10 +11,10 @@ export default [
     name: 'dashboard',
     meta: {
       title: {
-        zh_CN: '仪表盘',
+        zh_CN: '文本工具',
         en_US: 'Dashboard',
       },
-      icon: shallowRef(DashboardIcon),
+      icon: shallowRef(TextboxIcon),
       orderNo: 0,
     },
     children: [
@@ -24,19 +24,8 @@ export default [
         component: () => import('@/pages/dashboard/base/index.vue'),
         meta: {
           title: {
-            zh_CN: '概览仪表盘',
+            zh_CN: '文本对比',
             en_US: 'Overview',
-          },
-        },
-      },
-      {
-        path: 'detail',
-        name: 'DashboardDetail',
-        component: () => import('@/pages/dashboard/detail/index.vue'),
-        meta: {
-          title: {
-            zh_CN: '统计报表',
-            en_US: 'Dashboard Detail',
           },
         },
       },
