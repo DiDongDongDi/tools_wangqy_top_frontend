@@ -1,16 +1,5 @@
 <template>
   <div v-if="layout === 'side'" class="header-menu-search">
-    <t-input
-      class="header-search"
-      :class="[{ 'hover-active': isSearchFocus }]"
-      :placeholder="t('layout.searchPlaceholder')"
-      @blur="changeSearchFocus(false)"
-      @focus="changeSearchFocus(true)"
-    >
-      <template #prefix-icon>
-        <t-icon class="icon" name="search" size="16" />
-      </template>
-    </t-input>
   </div>
 
   <div v-else class="header-menu-search-left">
