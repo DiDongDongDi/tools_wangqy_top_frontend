@@ -4,6 +4,7 @@ import detailBase from './detail-base';
 import detailCard from './detail-card';
 import detailDeploy from './detail-deploy';
 import detailSecondary from './detail-secondary';
+import excelTools from './excel-tools';
 import formBase from './form-base';
 import formStep from './form-step';
 import listBase from './list-base';
@@ -25,6 +26,7 @@ export default {
   detailCard,
   detailDeploy,
   detailSecondary,
+  excelTools,
   formBase,
   formStep,
   user,
