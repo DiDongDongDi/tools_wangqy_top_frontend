@@ -16,3 +16,5 @@ v23.11.0
 wangqingyu@wangqingyudeMacBook-Pro ~ % npm -v
 10.9.2
 ```
+
+nginx配置详见`obsidian/tools.wangqy.top nginx配置`
