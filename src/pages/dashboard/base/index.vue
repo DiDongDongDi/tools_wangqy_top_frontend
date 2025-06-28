@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import TextCompare from '@/components/text-compare/index.vue';
+import TextCompare from '@/pages/dashboard/base/components/TextCompare.vue';
 
 defineOptions({
   name: 'DashboardBase',
