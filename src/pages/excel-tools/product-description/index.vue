@@ -81,12 +81,12 @@
     </t-card>
   </div>
 </template>
-
 <script setup lang="ts">
-import { t } from '@/locales';
 import { UploadIcon } from 'tdesign-icons-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
+
+import { t } from '@/locales';
 
 interface FileInfo {
   file_name: string;
@@ -159,7 +159,7 @@ const onUploadSuccess = (response: UploadResponse, file: File) => {
     productDescriptionsAI.value = response.excel_info.product_descriptions_ai;
 
     // 初始化选中状态
-    selectedItems.value = new Array(productDescriptions.value.length).fill(false);
+    selectedItems.value = Array.from({ length: productDescriptions.value.length }).fill(false);
 
     MessagePlugin.success(t('pages.excelTools.productDescription.upload.success'));
   } else {
@@ -178,7 +178,7 @@ const formatFileSize = (bytes: number): string => {
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 };
 
 const isItemInAI = (index: number): boolean => {
@@ -194,7 +194,6 @@ const deselectAll = () => {
   selectedItems.value = selectedItems.value.map(() => false);
 };
 </script>
-
 <style scoped>
 .product-description-container {
   padding: 20px;

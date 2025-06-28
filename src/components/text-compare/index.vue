@@ -50,7 +50,7 @@
                 <t-icon name="error-circle" class="icon-only" />
                 <span>文本 A 多余行 ({{ onlyInA.length }} 行)</span>
               </div>
-              <t-button size="small" theme="default" variant="outline" @click="copyTextA" class="copy-btn">
+              <t-button size="small" theme="default" variant="outline" class="copy-btn" @click="copyTextA">
                 复制
               </t-button>
             </div>
@@ -69,7 +69,7 @@
                 <t-icon name="check-circle" class="icon-common" />
                 <span>文本 AB 公共行 ({{ commonLines.length }} 行)</span>
               </div>
-              <t-button size="small" theme="default" variant="outline" @click="copyCommon" class="copy-btn">
+              <t-button size="small" theme="default" variant="outline" class="copy-btn" @click="copyCommon">
                 复制
               </t-button>
             </div>
@@ -88,7 +88,7 @@
                 <t-icon name="error-circle" class="icon-only" />
                 <span>文本 B 多余行 ({{ onlyInB.length }} 行)</span>
               </div>
-              <t-button size="small" theme="default" variant="outline" @click="copyTextB" class="copy-btn">
+              <t-button size="small" theme="default" variant="outline" class="copy-btn" @click="copyTextB">
                 复制
               </t-button>
             </div>
