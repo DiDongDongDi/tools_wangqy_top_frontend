@@ -83,15 +83,37 @@
 </template>
 <script setup lang="ts">
 import { UploadIcon } from 'tdesign-icons-vue-next';
-import type { SuccessContext, UploadFile } from 'tdesign-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
-import type { FileInfo, UploadResponse } from '@/api/model/excelToolsModel';
 import { t } from '@/locales';
 
+interface FileInfo {
+  file_name: string;
+  file_size: number;
+  excel_info: {
+    total_rows: number;
+    total_columns: number;
+    product_descriptions: string[][];
+    product_descriptions_ai: string[][];
+  };
+}
+
+interface UploadResponse {
+  success: boolean;
+  message: string;
+  file_name: string;
+  file_size: number;
+  excel_info: {
+    total_rows: number;
+    total_columns: number;
+    product_descriptions: string[][];
+    product_descriptions_ai: string[][];
+  };
+}
+
 // 响应式数据
-const fileList = ref<UploadFile[]>([]);
+const fileList = ref([]);
 const uploading = ref(false);
 const fileInfo = ref<FileInfo | null>(null);
 const productDescriptions = ref<string[][]>([]);
@@ -104,16 +126,16 @@ const uploadHeaders = computed(() => ({}));
 const uploadData = computed(() => ({}));
 
 // 方法
-const beforeUpload = (file: UploadFile) => {
+const beforeUpload = (file: File) => {
   const isExcel =
-    file.raw?.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-    file.raw?.type === 'application/vnd.ms-excel';
+    file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+    file.type === 'application/vnd.ms-excel';
   if (!isExcel) {
     MessagePlugin.error(t('pages.excelTools.productDescription.upload.accept'));
     return false;
   }
 
-  const isLt10M = (file.raw?.size || 0) / 1024 / 1024 < 10;
+  const isLt10M = file.size / 1024 / 1024 < 10;
   if (!isLt10M) {
     MessagePlugin.error(t('pages.excelTools.productDescription.upload.sizeLimit'));
     return false;
@@ -123,9 +145,8 @@ const beforeUpload = (file: UploadFile) => {
   return true;
 };
 
-const onUploadSuccess = (context: SuccessContext) => {
+const onUploadSuccess = (response: UploadResponse, file: File) => {
   uploading.value = false;
-  const response = context.response as UploadResponse;
 
   if (response.success) {
     fileInfo.value = {
@@ -138,7 +159,7 @@ const onUploadSuccess = (context: SuccessContext) => {
     productDescriptionsAI.value = response.excel_info.product_descriptions_ai;
 
     // 初始化选中状态
-    selectedItems.value = Array.from({ length: productDescriptions.value.length }, () => false);
+    selectedItems.value = Array.from({ length: productDescriptions.value.length }).fill(false);
 
     MessagePlugin.success(t('pages.excelTools.productDescription.upload.success'));
   } else {
