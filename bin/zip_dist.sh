@@ -5,6 +5,10 @@ set -e
 
 echo "开始打包 dist 目录..."
 
+# 进入脚本所在目录的上一级目录
+cd "$(dirname "$0")/.."
+
+
 # 检查是否存在 dist 目录
 if [ -d "dist" ]; then
     echo "发现已存在的 dist 目录，正在删除..."
