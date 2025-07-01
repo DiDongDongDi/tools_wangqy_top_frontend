@@ -26,7 +26,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # 使用指定版本的 Node.js
 nvm use 23.11.0
-nohup npm run dev >dev.log 2>&1 &
+nohup npm run dev:linux >dev.log 2>&1 &
 
 # 获取进程ID
 DEV_PID=$!
