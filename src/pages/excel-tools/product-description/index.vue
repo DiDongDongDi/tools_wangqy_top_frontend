@@ -68,10 +68,7 @@
 
             <div class="group-items">
               <div v-for="(description, descIndex) in group" :key="descIndex" class="description-item">
-                <t-checkbox
-                  v-model="selectedItems[groupIndex][descIndex]"
-                  :disabled="!isItemInAI(groupIndex, descIndex)"
-                >
+                <t-checkbox v-model="selectedItems[groupIndex][descIndex]">
                   <div class="description-content">
                     <span class="description-text" :class="{ 'ai-filtered': !isItemInAI(groupIndex, descIndex) }">
                       {{ description }}
@@ -165,8 +162,10 @@ const onUploadSuccess = (context: SuccessContext) => {
     productDescriptions.value = response.excel_info.product_descriptions;
     productDescriptionsAI.value = response.excel_info.product_descriptions_ai;
 
-    // 初始化选中状态 - 二维数组
-    selectedItems.value = productDescriptions.value.map((group) => Array.from({ length: group.length }, () => false));
+    // 初始化选中状态 - 二维数组，在AI中的自动勾选
+    selectedItems.value = productDescriptions.value.map((group, groupIndex) =>
+      group.map((_, descIndex) => isItemInAI(groupIndex, descIndex)),
+    );
 
     MessagePlugin.success(t('pages.excelTools.productDescription.upload.success'));
   } else {
@@ -194,9 +193,7 @@ const isItemInAI = (groupIndex: number, descIndex: number): boolean => {
 };
 
 const selectAll = () => {
-  selectedItems.value = selectedItems.value.map((group, groupIndex) =>
-    group.map((_, descIndex) => isItemInAI(groupIndex, descIndex)),
-  );
+  selectedItems.value = selectedItems.value.map((group) => group.map(() => true));
 };
 
 const deselectAll = () => {
