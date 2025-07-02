@@ -122,7 +122,7 @@ const productDescriptionsAI = ref<string[][]>([]);
 const selectedItems = ref<boolean[]>([]);
 
 // 计算属性
-const uploadUrl = computed(() => 'api/excel-tools/file/upload');
+const uploadUrl = computed(() => '/api/excel-tools/file/upload');
 const uploadHeaders = computed(() => ({}));
 const uploadData = computed(() => ({}));
 
