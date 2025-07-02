@@ -190,7 +190,7 @@ const formatFileSize = (bytes: number): string => {
 
 const isItemInAI = (groupIndex: number, descIndex: number): boolean => {
   const item = productDescriptions.value[groupIndex][descIndex];
-  return productDescriptionsAI.value.some((aiGroup) => aiGroup.some((aiItem) => aiItem === item));
+  return productDescriptionsAI.value.some((aiGroup) => aiGroup.includes(item));
 };
 
 const selectAll = () => {
@@ -296,7 +296,8 @@ const deselectAll = () => {
 
 .group-items {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
