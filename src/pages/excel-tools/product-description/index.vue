@@ -59,22 +59,27 @@
           </div>
         </div>
 
-        <div class="product-items">
-          <div v-for="(item, index) in productDescriptions" :key="index" class="product-item">
-            <t-checkbox v-model="selectedItems[index]" :disabled="!isItemInAI(index)">
-              <div class="product-content">
-                <div class="product-row">
-                  <span
-                    v-for="(cell, cellIndex) in item"
-                    :key="cellIndex"
-                    class="product-cell"
-                    :class="{ 'ai-filtered': !isItemInAI(index) }"
-                  >
-                    {{ cell }}
-                  </span>
-                </div>
+        <div class="product-groups">
+          <div v-for="(group, groupIndex) in productDescriptions" :key="groupIndex" class="product-group">
+            <div class="group-header">
+              <h4>产品组 {{ groupIndex + 1 }}</h4>
+              <span class="group-count">({{ group.length }} 个描述)</span>
+            </div>
+
+            <div class="group-items">
+              <div v-for="(description, descIndex) in group" :key="descIndex" class="description-item">
+                <t-checkbox
+                  v-model="selectedItems[groupIndex][descIndex]"
+                  :disabled="!isItemInAI(groupIndex, descIndex)"
+                >
+                  <div class="description-content">
+                    <span class="description-text" :class="{ 'ai-filtered': !isItemInAI(groupIndex, descIndex) }">
+                      {{ description }}
+                    </span>
+                  </div>
+                </t-checkbox>
               </div>
-            </t-checkbox>
+            </div>
           </div>
         </div>
       </div>
@@ -119,7 +124,7 @@ const uploading = ref(false);
 const fileInfo = ref<FileInfo | null>(null);
 const productDescriptions = ref<string[][]>([]);
 const productDescriptionsAI = ref<string[][]>([]);
-const selectedItems = ref<boolean[]>([]);
+const selectedItems = ref<boolean[][]>([]);
 
 // 计算属性
 const uploadUrl = computed(() => '/api/excel-tools/file/upload');
@@ -160,8 +165,8 @@ const onUploadSuccess = (context: SuccessContext) => {
     productDescriptions.value = response.excel_info.product_descriptions;
     productDescriptionsAI.value = response.excel_info.product_descriptions_ai;
 
-    // 初始化选中状态
-    selectedItems.value = Array.from({ length: productDescriptions.value.length }, () => false);
+    // 初始化选中状态 - 二维数组
+    selectedItems.value = productDescriptions.value.map((group) => Array.from({ length: group.length }, () => false));
 
     MessagePlugin.success(t('pages.excelTools.productDescription.upload.success'));
   } else {
@@ -183,17 +188,19 @@ const formatFileSize = (bytes: number): string => {
   return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 };
 
-const isItemInAI = (index: number): boolean => {
-  const item = productDescriptions.value[index];
-  return productDescriptionsAI.value.some((aiItem) => JSON.stringify(aiItem) === JSON.stringify(item));
+const isItemInAI = (groupIndex: number, descIndex: number): boolean => {
+  const item = productDescriptions.value[groupIndex][descIndex];
+  return productDescriptionsAI.value.some((aiGroup) => aiGroup.some((aiItem) => aiItem === item));
 };
 
 const selectAll = () => {
-  selectedItems.value = selectedItems.value.map((_, index) => isItemInAI(index));
+  selectedItems.value = selectedItems.value.map((group, groupIndex) =>
+    group.map((_, descIndex) => isItemInAI(groupIndex, descIndex)),
+  );
 };
 
 const deselectAll = () => {
-  selectedItems.value = selectedItems.value.map(() => false);
+  selectedItems.value = selectedItems.value.map((group) => group.map(() => false));
 };
 </script>
 <style scoped>
@@ -253,65 +260,91 @@ const deselectAll = () => {
   gap: 8px;
 }
 
-.product-items {
+.product-groups {
   max-height: 600px;
   overflow-y: auto;
 }
 
-.product-item {
-  margin-bottom: 12px;
-  padding: 12px;
+.product-group {
+  margin-bottom: 24px;
+  padding: 16px;
   border: 1px solid #e7e7e7;
-  border-radius: 6px;
-  background-color: #fff;
+  border-radius: 8px;
+  background-color: #fafafa;
 }
 
-.product-item:hover {
-  border-color: #0052d9;
-  box-shadow: 0 2px 8px rgba(0, 82, 217, 0.1);
-}
-
-.product-content {
-  margin-left: 8px;
-}
-
-.product-row {
+.group-header {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.group-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.group-count {
+  margin-left: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.group-items {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.product-cell {
-  padding: 4px 8px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #333;
+.description-item {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
 }
 
-.product-cell.ai-filtered {
-  background-color: #ffebee;
+.description-item:hover {
+  border-color: #0052d9;
+  box-shadow: 0 2px 4px rgba(0, 82, 217, 0.1);
+}
+
+.description-content {
+  margin-left: 8px;
+}
+
+.description-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.description-text.ai-filtered {
   color: #d32f2f;
   text-decoration: line-through;
   opacity: 0.6;
 }
 
 /* 滚动条样式 */
-.product-items::-webkit-scrollbar {
+.product-groups::-webkit-scrollbar {
   width: 6px;
 }
 
-.product-items::-webkit-scrollbar-track {
+.product-groups::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
-.product-items::-webkit-scrollbar-thumb {
+.product-groups::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
 }
 
-.product-items::-webkit-scrollbar-thumb:hover {
+.product-groups::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 </style>
